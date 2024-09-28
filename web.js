@@ -2,7 +2,6 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-const { join } = require('path');
 
 const app = express();
 
@@ -12,8 +11,15 @@ const port = process.env.PORT || 3000;
 // Enable CORS for all routes
 app.use(cors());
 
+// Add a health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// Create HTTP server
 const server = http.createServer(app);
 
+// Initialize Socket.IO
 const io = socketIo(server, {
   cors: {
     origin: "*", // Allow all origins for testing
@@ -47,7 +53,6 @@ io.on('connection', (socket) => {
   socket.on('room', (room) => {
     console.log(room, socket.id);
     socket.join(room);
-    console.log(room);
   });
 
   socket.on('disconnect', () => {
@@ -58,4 +63,5 @@ io.on('connection', (socket) => {
 // Start the server
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Assigned port: ${port}`);  // Log the assigned port
 });
