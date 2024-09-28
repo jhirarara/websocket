@@ -5,7 +5,7 @@ const cors = require('cors'); // Import the cors package
 const { join } = require('path');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Enable CORS for all routes
 app.use(cors());
