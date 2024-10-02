@@ -12,11 +12,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 
 // Add a health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
-
 // Create HTTP server
+
 const server = http.createServer(app);
 
 // Initialize Socket.IO
@@ -31,15 +28,14 @@ const io = socketIo(server, {
 io.on('connection', (socket) => {
   console.log('A user connected', socket.id);
 
-  socket.on('joinRoom', (data) => {
-    socket.join(data.value);
-    io.to(data.value).emit('message', `User ${data.user} has joined the room`);
+
+  socket.on('room', (room) => {
+    console.log(room, socket.id);
+    io.to(room).emit('message', `User  has joined the room`);
+    socket.join(room);
   });
 
-  socket.on('message', (message) => {
-    console.log(message);
-    io.emit('message', message.message);
-  });
+
 
   socket.on('send', (data) => {
     if (data === '') {
@@ -50,11 +46,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('room', (room) => {
-    console.log(room, socket.id);
-    socket.join(room);
-  });
-
+ 
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
   });
